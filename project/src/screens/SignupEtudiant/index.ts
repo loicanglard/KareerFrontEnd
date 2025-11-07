@@ -1,0 +1,1 @@
+export { SignupEtudiant } from './SignupEtudiant';
