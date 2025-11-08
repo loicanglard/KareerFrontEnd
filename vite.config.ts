@@ -3,6 +3,7 @@ import react from '@vitejs/plugin-react'
 import path from 'path'
 
 export default defineConfig({
+  // l'app est dans /project
   root: 'project',
   plugins: [react()],
   resolve: {
@@ -12,6 +13,14 @@ export default defineConfig({
       '@': path.resolve(__dirname, 'project/src')
     }
   },
-  server: { port: 5173, open: true },
-  build: { outDir: '../dist', emptyOutDir: true }
+  server: {
+    host: true,          // << indispensable pour Bolt
+    port: 5173,
+    strictPort: true,
+    hmr: { clientPort: 443 } // utile si la preview Bolt est derrière HTTPS
+  },
+  build: {
+    outDir: path.resolve(__dirname, 'dist'),
+    emptyOutDir: true
+  }
 })
