@@ -1,26 +1,36 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import path from 'path'
+import { fileURLToPath } from 'url'
+
+// __dirname en ESM
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 export default defineConfig({
-  // l'app est dans /project
+  // ton app vit sous /project (index.html à cet endroit)
   root: 'project',
   plugins: [react()],
   resolve: {
     alias: {
       '@components': path.resolve(__dirname, 'project/src/components'),
       '@lib': path.resolve(__dirname, 'project/src/lib'),
-      '@': path.resolve(__dirname, 'project/src')
-    }
+      '@': path.resolve(__dirname, 'project/src'),
+    },
   },
   server: {
-    host: true,          // << indispensable pour Bolt
+    host: true,                     // nécessaire pour Bolt
     port: 5173,
-    strictPort: true,
-    hmr: { clientPort: 443 } // utile si la preview Bolt est derrière HTTPS
+    strictPort: false,
+    hmr: { clientPort: 443, protocol: 'wss' }, // HMR à travers l’iframe Bolt
   },
+  preview: {
+    host: true,
+    port: 5173,
+  },
+  // build dans /dist à la racine du repo (Netlify/vercel friendly)
   build: {
-    outDir: path.resolve(__dirname, 'dist'),
-    emptyOutDir: true
-  }
+    outDir: '../dist',
+    emptyOutDir: true,
+  },
 })
