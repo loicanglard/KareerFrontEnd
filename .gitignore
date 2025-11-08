@@ -141,3 +141,7 @@ vite.config.ts.timestamp-*
 .vite/
 dist/
 .env*
+
+# env files
+project/.env*
+!project/.env.example

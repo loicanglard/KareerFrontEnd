@@ -3,12 +3,13 @@ import react from '@vitejs/plugin-react'
 import path from 'path'
 import { fileURLToPath } from 'url'
 
-// __dirname en ESM
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
+// Active le HMR spécial Bolt seulement si VITE_BOLT=1
+const isBolt = process.env.VITE_BOLT === '1'
+
 export default defineConfig({
-  // ton app vit sous /project (index.html à cet endroit)
   root: 'project',
   plugins: [react()],
   resolve: {
@@ -19,18 +20,11 @@ export default defineConfig({
     },
   },
   server: {
-    host: true,                     // nécessaire pour Bolt
-    port: 5173,
-    strictPort: false,
-    hmr: { clientPort: 443, protocol: 'wss' }, // HMR à travers l’iframe Bolt
-  },
-  preview: {
     host: true,
     port: 5173,
+    strictPort: false,
+    hmr: isBolt ? { clientPort: 443, protocol: 'wss' } : true,
   },
-  // build dans /dist à la racine du repo (Netlify/vercel friendly)
-  build: {
-    outDir: '../dist',
-    emptyOutDir: true,
-  },
+  preview: { host: true, port: 5173 },
+  build: { outDir: '../dist', emptyOutDir: true },
 })
